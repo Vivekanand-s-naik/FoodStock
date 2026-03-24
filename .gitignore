@@ -1,0 +1,53 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build folders
+dist/
+build/
+out/
+
+# Dependency directories (optional duplicates)
+jspm_packages/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor folders
+.vscode/
+.idea/
+
+# Mac system files
+.AppleDouble
+.LSOverride
+
+# Windows system files
+ehthumbs.db
+Desktop.ini
+
+# Coverage
+coverage/
+
+# Optional: lock files (keep if you want reproducible builds)
+# package-lock.json
+# yarn.lock
