@@ -40,13 +40,19 @@ export default function App() {
     setTimeout(() => setMessage({ type: "", text: "" }), 3000);
   };
 
+  const normalizeFoods = (data = []) =>
+    Array.isArray(data) ? data.map(f => ({ ...f, id: f._id || f.id })) : [];
+
+  const normalizeUsers = (data = []) =>
+    Array.isArray(data) ? data.map(u => ({ ...u, id: u._id || u.id })) : [];
+
   // FOODS OPERATIONS
   const fetchFoods = async () => {
     try {
-      const res = await fetch("http://localhost:4000/foods");
+      const res = await fetch("http://localhost:4002");
       if (!res.ok) throw new Error(`Failed to fetch foods (${res.status})`);
       const data = await readApiResponse(res);
-      setFoods(Array.isArray(data) ? data : []);
+      setFoods(normalizeFoods(data));
     } catch (err) {
       showMessage("error", "Failed to fetch foods: " + err.message);
     }
@@ -72,7 +78,7 @@ export default function App() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/foods", {
+      const res = await fetch("http://localhost:4002", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -193,7 +199,7 @@ export default function App() {
       const res = await fetch(`http://localhost:4000/foods/search?${params}`);
       if (!res.ok) throw new Error(`Failed to search (${res.status})`);
       const data = await readApiResponse(res);
-      setFoods(Array.isArray(data) ? data : []);
+      setFoods(normalizeFoods(data));
     } catch (err) {
       showMessage("error", "Search failed: " + err.message);
     }
@@ -205,7 +211,7 @@ export default function App() {
       const res = await fetch("http://localhost:4000/users");
       if (!res.ok) throw new Error(`Failed to fetch users (${res.status})`);
       const data = await readApiResponse(res);
-      setUsers(Array.isArray(data) ? data : []);
+      setUsers(normalizeUsers(data));
     } catch (err) {
       showMessage("error", "Failed to fetch users: " + err.message);
     }
