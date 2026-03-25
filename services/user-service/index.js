@@ -13,39 +13,45 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 const useInMemory = process.env.USE_IN_MEMORY === "true";
 
 // Initialize database connection unless we intentionally run in-memory
+let dbReady = false;
 if (!useInMemory) {
-  connectDB().catch(err => {
-    console.error("Failed to start server:", err);
-    process.exit(1);
-  });
+  connectDB()
+    .then(() => { dbReady = true; })
+    .catch(err => {
+      console.error("MongoDB connection failed (service will stay up but DB ops will fail):", err.message);
+    });
 } else {
   console.log("Using in-memory user store (MongoDB disabled)");
+  dbReady = true;
 }
 
 // POST - Register a new user
 app.post("/register", async (req, res) => {
   try {
     const { email, name, password } = req.body;
-    
+
     if (!email || !name) {
       return res.status(400).json({ error: "Email and name are required" });
     }
-    
+
     if (useInMemory) {
       const existing = await store.findByEmail(email);
       if (existing) {
         return res.status(400).json({ error: "Email already registered" });
       }
-
       const user = await store.addUser({ email, name, password });
       return res.json({ msg: "User registered", user });
+    }
+
+    if (!dbReady) {
+      return res.status(503).json({ error: "Database not connected. Please try again shortly." });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "Email already registered" });
     }
-    
+
     const user = new User({ email, name, password });
     await user.save();
     res.json({ msg: "User registered", user });
@@ -57,6 +63,9 @@ app.post("/register", async (req, res) => {
 // GET - Fetch all users
 app.get("/", async (req, res) => {
   try {
+    if (!useInMemory && !dbReady) {
+      return res.json([]); // return empty list gracefully while DB is connecting
+    }
     const users = useInMemory
       ? await store.getAllUsers()
       : await User.find().select("-password");
