@@ -6,7 +6,6 @@ const cors = require("cors");
 try {
 	const app = express();
 	app.use(cors());
-	app.use(express.json());
 
 	const proxyOptions = {
 		changeOrigin: true,
