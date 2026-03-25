@@ -1,35 +1,95 @@
 
 const express = require("express");
+const connectDB = require("./db");
+const User = require("./models/User");
+const store = require("./inMemoryStore");
+const cors = require("cors");
+
 const app = express();
-app.use(express.json());
+app.use(cors());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-let users = [
-  { id: 1, email: "demo@example.com", name: "Demo User", createdAt: new Date() }
-];
-let nextId = 2;
+const useInMemory = process.env.USE_IN_MEMORY === "true";
 
-app.post("/register", (req, res) => {
-  const { email, name, password } = req.body;
-  if (!email || !name) {
-    return res.status(400).json({ error: "Email and name are required" });
+// Initialize database connection unless we intentionally run in-memory
+if (!useInMemory) {
+  connectDB().catch(err => {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  });
+} else {
+  console.log("Using in-memory user store (MongoDB disabled)");
+}
+
+// POST - Register a new user
+app.post("/register", async (req, res) => {
+  try {
+    const { email, name, password } = req.body;
+    
+    if (!email || !name) {
+      return res.status(400).json({ error: "Email and name are required" });
+    }
+    
+    if (useInMemory) {
+      const existing = await store.findByEmail(email);
+      if (existing) {
+        return res.status(400).json({ error: "Email already registered" });
+      }
+
+      const user = await store.addUser({ email, name, password });
+      return res.json({ msg: "User registered", user });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+    
+    const user = new User({ email, name, password });
+    await user.save();
+    res.json({ msg: "User registered", user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  if (users.find(u => u.email === email)) {
-    return res.status(400).json({ error: "Email already registered" });
-  }
-  const user = { id: nextId++, email, name, createdAt: new Date() };
-  users.push(user);
-  res.json({ msg: "User registered", user });
 });
 
-app.get("/", (req, res) => res.json(users));
-
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  const user = users.find(u => u.email === email);
-  if (!user) {
-    return res.status(401).json({ error: "User not found" });
+// GET - Fetch all users
+app.get("/", async (req, res) => {
+  try {
+    const users = useInMemory
+      ? await store.getAllUsers()
+      : await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  res.json({ msg: "Login successful", user });
 });
 
-app.listen(4001, () => console.log("User Service running"));
+// POST - User login
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (useInMemory) {
+      const user = await store.verifyUser(email, password);
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      return res.json({ msg: "Login successful", user });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+    
+    // Note: In production, use bcrypt to hash and compare passwords
+    // For now, we're just checking if the email exists
+    res.json({ msg: "Login successful", user: { _id: user._id, email: user.email, name: user.name } });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(4001, () => console.log("User Service running on port 4001"));

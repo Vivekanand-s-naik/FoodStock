@@ -3,35 +3,69 @@ const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const cors = require("cors");
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+try {
+	const app = express();
+	app.use(cors());
+	app.use(express.json());
 
-const proxyOptions = {
-	changeOrigin: true,
-	logLevel: "warn",
-	onError: (err, req, res) => {
-		console.error("Proxy error:", err);
-		res.status(503).json({ error: "Service unavailable" });
-	}
-};
+	const proxyOptions = {
+		changeOrigin: true,
+		logLevel: "warn",
+		onError: (err, req, res) => {
+			console.error("Proxy error:", err?.message || err);
+			res.status(503).json({ error: "Service unavailable" });
+		}
+	};
 
-app.use(
-	"/users",
-	createProxyMiddleware({
-		target: "http://localhost:4001",
-		pathRewrite: { "^/users": "" },
-		...proxyOptions
-	})
-);
+	app.use(
+		"/users",
+		createProxyMiddleware({
+			target: "http://localhost:4001",
+			pathRewrite: { "^/users": "" },
+			...proxyOptions
+		})
+	);
 
-app.use(
-	"/foods",
-	createProxyMiddleware({
-		target: "http://localhost:4002",
-		pathRewrite: { "^/foods": "" },
-		...proxyOptions
-	})
-);
+	app.use(
+		"/foods",
+		createProxyMiddleware({
+			target: "http://localhost:4002",
+			pathRewrite: { "^/foods": "" },
+			...proxyOptions
+		})
+	);
 
-app.listen(4000, () => console.log("Gateway running on 4000"));
+	// Health check endpoint
+	app.get("/health", (req, res) => {
+		res.json({ status: "OK" });
+	});
+
+	// Error handler
+	app.use((err, req, res, next) => {
+		console.error("Error:", err?.message || err);
+		res.status(500).json({ error: "Internal error" });
+	});
+
+	const PORT = 4000;
+	const server = app.listen(PORT, "127.0.0.1", () => {
+		console.log(`Gateway listening on http://127.0.0.1:${PORT}`);
+	});
+
+	// Prevent exit
+	server.on("error", (err) => {
+		console.error("Server error:", err?.message || err);
+	});
+
+	// Handle shutdown signals
+	process.on("SIGINT", () => {
+		console.log("\nShutting down...");
+		server.close(() => {
+			process.exit(0);
+		});
+	});
+
+} catch (err) {
+	console.error("FATAL:", err?.message || err);
+	console.error("Stack:", err?.stack);
+	process.exit(1);
+}
