@@ -56,5 +56,8 @@ export const api = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(order)
-  }).then(handleResponse)
+  }).then(handleResponse),
+
+  // Notifications (Admin only)
+  getNotifications: () => fetch(`${API_BASE_URL}/notifications`).then(handleResponse)
 };

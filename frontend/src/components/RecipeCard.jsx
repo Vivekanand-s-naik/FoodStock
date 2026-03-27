@@ -1,44 +1,161 @@
+// import React from "react";
+
+// const RecipeCard = ({ recipe, onEdit, onDelete, onOrder, userRole, loading }) => {
+//   const isAdmin = userRole === "admin";
+
+//   return (
+//     <div className="book-card">
+//       {recipe.imageUrl && (
+//         <div className="book-image">
+//           <img src={recipe.imageUrl} alt={recipe.name} style={{ width: "100%", borderRadius: "8px", height: "200px", objectFit: "cover" }} />
+//         </div>
+//       )}
+//       <div className="book-card-header">
+//         <h3>{recipe.name}</h3>
+//       </div>
+//       <div className="book-card-body">
+//         <span className="book-category">{recipe.category}</span>
+//         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
+//           {recipe.price > 0 && <span className="book-price">${recipe.price.toFixed(2)}</span>}
+//           <span className={`stock-tag ${recipe.quantity > 0 || recipe.quantity === undefined ? "in-stock" : "out-of-stock"}`}>
+//             {recipe.quantity !== undefined ? (recipe.quantity > 0 ? `${recipe.quantity} left` : "Out of stock") : "In Stock"}
+//           </span>
+//         </div>
+//         <p className="book-description">{recipe.description || "No description provided"}</p>
+//       </div>
+//       <div className="book-card-footer">
+//         {isAdmin ? (
+//           <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+//             <button className="btn btn-secondary btn-sm" onClick={() => onEdit(recipe)} style={{ flex: 1 }}>✏️ Edit</button>
+//             <button className="btn btn-danger btn-sm" onClick={() => onDelete(recipe.id)} disabled={loading === recipe.id} style={{ flex: 1 }}>
+//               {loading === recipe.id ? "..." : "🗑️ Delete"}
+//             </button>
+//           </div>
+//         ) : (
+//           <button 
+//             className="btn btn-primary btn-sm" 
+//             onClick={() => onOrder(recipe)} 
+//             disabled={recipe.quantity !== undefined && recipe.quantity <= 0}
+//             style={{ width: "100%" }}
+//           >
+//             🛒 {recipe.quantity === undefined || recipe.quantity > 0 ? "Order Now" : "Unavailable"}
+//           </button>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default RecipeCard;
 import React from "react";
 
-const RecipeCard = ({ recipe, onEdit, onDelete, onOrder, userRole, loading }) => {
+const RecipeCard = ({
+  recipe,
+  onEdit,
+  onDelete,
+  onOrder,
+  userRole,
+  isOrdering, // ✅ FIX: use proper prop
+}) => {
   const isAdmin = userRole === "admin";
-  
+
+  const isOutOfStock =
+    recipe.quantity !== undefined && recipe.quantity <= 0;
+
   return (
     <div className="book-card">
+      {/* Image */}
       {recipe.imageUrl && (
         <div className="book-image">
-          <img src={recipe.imageUrl} alt={recipe.name} style={{ width: "100%", borderRadius: "8px", height: "200px", objectFit: "cover" }} />
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.name}
+            style={{
+              width: "100%",
+              borderRadius: "8px",
+              height: "200px",
+              objectFit: "cover",
+            }}
+          />
         </div>
       )}
+
+      {/* Header */}
       <div className="book-card-header">
         <h3>{recipe.name}</h3>
       </div>
+
+      {/* Body */}
       <div className="book-card-body">
         <span className="book-category">{recipe.category}</span>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
-          {recipe.price > 0 && <span className="book-price">${recipe.price.toFixed(2)}</span>}
-          <span className={`stock-tag ${recipe.quantity > 0 ? "in-stock" : "out-of-stock"}`}>
-            {recipe.quantity > 0 ? `${recipe.quantity} left` : "Out of stock"}
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "10px",
+          }}
+        >
+          {recipe.price > 0 && (
+            <span className="book-price">
+              ${recipe.price.toFixed(2)}
+            </span>
+          )}
+
+          <span
+            className={`stock-tag ${!isOutOfStock ? "in-stock" : "out-of-stock"
+              }`}
+          >
+            {recipe.quantity !== undefined
+              ? isOutOfStock
+                ? "Out of stock"
+                : `${recipe.quantity} left`
+              : "In Stock"}
           </span>
         </div>
-        <p className="book-description">{recipe.description || "No description provided"}</p>
+
+        <p className="book-description">
+          {recipe.description || "No description provided"}
+        </p>
       </div>
+
+      {/* Footer */}
       <div className="book-card-footer">
         {isAdmin ? (
           <div style={{ display: "flex", gap: "10px", width: "100%" }}>
-            <button className="btn btn-secondary btn-sm" onClick={() => onEdit(recipe)} style={{ flex: 1 }}>✏️ Edit</button>
-            <button className="btn btn-danger btn-sm" onClick={() => onDelete(recipe.id)} disabled={loading === recipe.id} style={{ flex: 1 }}>
-              {loading === recipe.id ? "..." : "🗑️ Delete"}
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => onEdit(recipe)}
+              style={{ flex: 1 }}
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => onDelete(recipe.id)}
+              disabled={isOrdering}
+              style={{ flex: 1 }}
+            >
+              {isOrdering ? "..." : "🗑️ Delete"}
             </button>
           </div>
         ) : (
-          <button 
-            className="btn btn-primary btn-sm" 
-            onClick={() => onOrder(recipe)} 
-            disabled={recipe.quantity <= 0}
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              console.log("🛒 Order clicked:", recipe.name); // ✅ debug
+              onOrder(recipe);
+            }}
+            disabled={isOutOfStock || isOrdering}
             style={{ width: "100%" }}
           >
-            🛒 {recipe.quantity > 0 ? "Order Now" : "Unavailable"}
+            {isOrdering
+              ? "Processing..."
+              : isOutOfStock
+                ? "Unavailable"
+                : "🛒 Order Now"}
           </button>
         )}
       </div>

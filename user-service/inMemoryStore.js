@@ -3,8 +3,27 @@
 
 class InMemoryStore {
   constructor() {
-    this.users = [];
-    this.idCounter = 1;
+    this.users = [
+      {
+        _id: 10,
+        name: "Admin User",
+        email: "admin@foodapp.com",
+        password: "admin",
+        role: "admin",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        _id: 11,
+        name: "Normal User",
+        email: "user@foodapp.com",
+        password: "user",
+        role: "user",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+    this.idCounter = 100;
   }
 
   // Add a user

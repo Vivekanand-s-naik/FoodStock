@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AddRecipe from "./pages/AddRecipe";
+import AdminDashboard from "./pages/AdminDashboard";
 import "./App.css";
 
 function App() {
@@ -36,10 +37,7 @@ function App() {
           </div>
         )}
         {activeTab === "dashboard" && user?.role === "admin" && (
-          <div className="tab-content">
-            <h2>🛠️ Admin Panel</h2>
-            <AddRecipe onRecipeAdded={() => setActiveTab("recipes")} />
-          </div>
+          <AdminDashboard user={user} />
         )}
         {activeTab === "dashboard" && user?.role !== "admin" && (
           <div className="tab-content">

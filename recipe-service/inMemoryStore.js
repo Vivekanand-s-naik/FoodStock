@@ -3,8 +3,31 @@
 
 class InMemoryRecipeStore {
   constructor() {
-    this.recipes = [];
-    this.idCounter = 1;
+    this.recipes = [
+      {
+        _id: 101,
+        name: "Classic Burger",
+        category: "Fast Food",
+        price: 9.99,
+        description: "Juicy beef patty with lettuce and cheese.",
+        imageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
+        quantity: 15,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        _id: 102,
+        name: "Margherita Pizza",
+        category: "Italian",
+        price: 12.50,
+        description: "Fresh tomato, mozzarella, and basil.",
+        imageUrl: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500",
+        quantity: 10,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+    this.idCounter = 200;
   }
 
   // Add a recipe
