@@ -14,10 +14,10 @@ router.use(
 );
 
 router.use(
-	"/books",
+	"/recipes",
 	createProxyMiddleware({
 		target: "http://localhost:4002",
-		pathRewrite: { "^/books": "" },
+		pathRewrite: { "^/recipes": "" },
 		...proxyOptions
 	})
 );
