@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+    depends_on:
+      - user-service
+      - recipe-service
+      - order-service
+      - notification-service
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - MONGO_URI=mongodb://mongodb:27017/foodapp-user-service
+
+  recipe-service:
+    build: ./recipe-service
+    ports:
+      - "4002:4002"
+    environment:
+      - PORT=4002
+      - MONGO_URI=mongodb://mongodb:27017/foodapp-recipe-service
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "4003:4003"
+    environment:
+      - PORT=4003
+      - MONGO_URI=mongodb://mongodb:27017/foodapp-order-service
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "4004:4004"
+    environment:
+      - PORT=4004
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

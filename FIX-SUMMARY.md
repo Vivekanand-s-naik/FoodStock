@@ -17,7 +17,7 @@ This left the API endpoints unreachable, so the client's fetch request never got
 ### 1. **Database Connection Timeout (Critical Fix)**
 **Files Modified:**
 - `services/user-service/db.js`
-- `services/food-service/db.js`
+- `services/book-service/db.js`
 
 **Changes:**
 - Added 5-second timeout to MongoDB connections
@@ -46,7 +46,7 @@ await mongoose.connect(mongoURI, {
 ### 2. **Better Error Handling in Services**
 **Files Modified:**
 - `services/user-service/index.js`
-- `services/food-service/index.js`
+- `services/book-service/index.js`
 
 **Changes:**
 - All endpoints now check if MongoDB is connected before executing
@@ -139,7 +139,7 @@ cd services\user-service
 node index.js
 
 # Terminal 3
-cd services\food-service
+cd services\book-service
 node index.js
 
 # Terminal 4
@@ -199,8 +199,8 @@ These messages now guide users to the solution!
 Modified:
 ✓ services/user-service/db.js
 ✓ services/user-service/index.js
-✓ services/food-service/db.js
-✓ services/food-service/index.js
+✓ services/book-service/db.js
+✓ services/book-service/index.js
 ✓ client/src/App.jsx
 
 New:
@@ -234,7 +234,7 @@ curl http://localhost:4001/health
 # {"status":"ok","service":"user-service"}
 
 curl http://localhost:4002/health
-# {"status":"ok","service":"food-service"}
+# {"status":"ok","service":"book-service"}
 ```
 
 ### Mongoose Connection States

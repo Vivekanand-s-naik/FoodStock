@@ -97,12 +97,12 @@ node index.js
 # Should show: ✓ MongoDB connected to User Service
 ```
 
-### Terminal 3: Food Service
+### Terminal 3: Book Service
 ```powershell
-cd services\food-service
+cd services\book-service
 npm install  # First time only
 node index.js
-# Should show: ✓ MongoDB connected to Food Service
+# Should show: ✓ MongoDB connected to Book Service
 ```
 
 ### Terminal 4: Gateway
@@ -172,7 +172,7 @@ npm install
 - [ ] MongoDB installed? (Run: `mongod --version`)
 - [ ] MongoDB running? (Terminal 1 should show "Waiting for connections")
 - [ ] User Service connected? (Terminal 2 should show "✓ MongoDB connected")
-- [ ] Food Service connected? (Terminal 3 should show "✓ MongoDB connected")
+- [ ] Book Service connected? (Terminal 3 should show "✓ MongoDB connected")
 - [ ] Gateway running? (Terminal 4 should show "Gateway running on 4000")
 - [ ] React app running? (Terminal 5 should show localhost URL)
 - [ ] Ports not in use? (4000, 4001, 4002, 27017)
@@ -198,7 +198,7 @@ taskkill /F /IM node.exe
 netstat -ano | findstr :27017  # MongoDB
 netstat -ano | findstr :4000   # Gateway
 netstat -ano | findstr :4001   # User Service
-netstat -ano | findstr :4002   # Food Service
+netstat -ano | findstr :4002   # Book Service
 ```
 
 ---

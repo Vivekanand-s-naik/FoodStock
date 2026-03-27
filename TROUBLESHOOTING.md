@@ -75,17 +75,17 @@ You should see:
 User Service running on port 4001
 ```
 
-**Terminal 3 - Food Service**
+**Terminal 3 - Book Service**
 ```powershell
-cd services/food-service
+cd services/book-service
 npm install  # First time only
 node index.js
 ```
 
 You should see:
 ```
-✓ MongoDB connected to Food Service
-Food Service running on port 4002
+✓ MongoDB connected to Book Service
+Book Service running on port 4002
 ```
 
 **Terminal 4 - Gateway**
@@ -130,9 +130,9 @@ MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/user-service?retry
 PORT=4001
 ```
 
-**services/food-service/.env**
+**services/book-service/.env**
 ```
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/food-service?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/book-service?retryWrites=true&w=majority
 PORT=4002
 ```
 
@@ -163,10 +163,10 @@ curl http://localhost:4001/health
 # Response: {"status":"ok","service":"user-service"}
 ```
 
-### Check if Food Service is running:
+### Check if Book Service is running:
 ```bash
 curl http://localhost:4002/health
-# Response: {"status":"ok","service":"food-service"}
+# Response: {"status":"ok","service":"book-service"}
 ```
 
 ### Check if Gateway is running:
@@ -196,13 +196,13 @@ taskkill /F /IM node.exe
 
 # Delete node_modules from all folders
 Remove-Item -Recurse -Force services/user-service/node_modules
-Remove-Item -Recurse -Force services/food-service/node_modules
+Remove-Item -Recurse -Force services/book-service/node_modules
 Remove-Item -Recurse -Force gateway/node_modules
 Remove-Item -Recurse -Force client/node_modules
 
 # Delete package-lock files
 Remove-Item services/user-service/package-lock.json
-Remove-Item services/food-service/package-lock.json
+Remove-Item services/book-service/package-lock.json
 Remove-Item gateway/package-lock.json
 Remove-Item client/package-lock.json
 

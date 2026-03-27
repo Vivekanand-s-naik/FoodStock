@@ -1,7 +1,7 @@
 # MongoDB Setup Guide
 
 ## Overview
-Added MongoDB integration to both **Food Service** and **User Service** microservices.
+Added MongoDB integration to both **Book Service** and **User Service** microservices.
 
 ## Changes Made
 
@@ -10,24 +10,24 @@ Added MongoDB integration to both **Food Service** and **User Service** microser
 - `dotenv` (^16.0.3) - Environment variable management
 
 ### 2. **Database Connection**
-- `services/food-service/db.js` - MongoDB connection for Food Service
+- `services/book-service/db.js` - MongoDB connection for Book Service
 - `services/user-service/db.js` - MongoDB connection for User Service
 
 ### 3. **Data Models**
-- `services/food-service/models/Food.js` - Food document schema
+- `services/book-service/models/Book.js` - Book document schema
   - Fields: name, category, price, description, createdAt, updatedAt
   
 - `services/user-service/models/User.js` - User document schema
   - Fields: email, name, password, createdAt, updatedAt
 
 ### 4. **Updated Services**
-- **Food Service (port 4002)**
-  - POST `/` - Create food with MongoDB
-  - GET `/` - Fetch all foods
-  - GET `/search` - Search foods using MongoDB regex
+- **Book Service (port 4002)**
+  - POST `/` - Create book with MongoDB
+  - GET `/` - Fetch all books
+  - GET `/search` - Search books using MongoDB regex
   - GET `/categories` - Get distinct categories
-  - PUT `/:id` - Update food by MongoDB ID
-  - DELETE `/:id` - Delete food by MongoDB ID
+  - PUT `/:id` - Update book by MongoDB ID
+  - DELETE `/:id` - Delete book by MongoDB ID
 
 - **User Service (port 4001)**
   - POST `/register` - Register user with MongoDB uniqueness constraint
@@ -42,7 +42,7 @@ Added MongoDB integration to both **Food Service** and **User Service** microser
 
 1. **Install dependencies:**
    ```bash
-   cd services/food-service && npm install
+   cd services/book-service && npm install
    cd services/user-service && npm install
    ```
 
@@ -52,8 +52,8 @@ Added MongoDB integration to both **Food Service** and **User Service** microser
 
 3. **Start services:**
    ```bash
-   # Terminal 1 - Food Service
-   cd services/food-service && node index.js
+   # Terminal 1 - Book Service
+   cd services/book-service && node index.js
    
    # Terminal 2 - User Service
    cd services/user-service 

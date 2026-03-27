@@ -54,9 +54,9 @@ npm install
 node index.js
 ```
 
-**Terminal 3: Food Service**
+**Terminal 3: Book Service**
 ```powershell
-cd services\food-service
+cd services\book-service
 npm install
 node index.js
 ```

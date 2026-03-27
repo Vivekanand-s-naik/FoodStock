@@ -26,13 +26,13 @@ node index.js
 
 ---
 
-#### Terminal 3: Food Service
+#### Terminal 3: Book Service
 ```powershell
-cd services\food-service
+cd services\book-service
 npm install
 node index.js
 ```
-✅ When you see: `"✓ MongoDB connected to Food Service"` → Service is ready
+✅ When you see: `"✓ MongoDB connected to Book Service"` → Service is ready
 
 ---
 
@@ -88,7 +88,7 @@ npm run dev
 ### Check Checklist:
 - [ ] MongoDB open in Terminal 1? (shows "Waiting for connections")
 - [ ] User Service says "✓ MongoDB connected"?
-- [ ] Food Service says "✓ MongoDB connected"?
+- [ ] Book Service says "✓ MongoDB connected"?
 - [ ] Gateway running on 4000?
 - [ ] React dev server running?
 - [ ] Browser shows http://localhost:5173?
@@ -135,4 +135,4 @@ mongod
 Once everything is running, the registration feature should work perfectly.
 No more "Registering..." stuck issue! 
 
-**Happy testing!** 🍔
+**Happy testing!** 📚
