@@ -24,6 +24,22 @@ app.post("/send", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4004;
+
+// Admin alert for orders
+app.post("/admin-alert", async (req, res) => {
+  try {
+    const { orderId, customerName, totalAmount } = req.body;
+    const subject = `New Order Placed: #${orderId}`;
+    const body = `Customer ${customerName} has placed an order for $${totalAmount}. Please check the dashboard.`;
+    
+    // In a real app, we'd fetch all admin emails from user-service
+    await emailService.sendEmail("admin@foodapp.com", subject, body);
+    res.json({ msg: "Admin notified" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Notification Service running on port ${PORT}`);
 });

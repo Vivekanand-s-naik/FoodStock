@@ -5,17 +5,17 @@ const useInMemory = process.env.USE_IN_MEMORY === "true";
 
 exports.createRecipe = async (req, res) => {
   try {
-    const { name, category = "Other", price = 0, description = "" } = req.body;
+    const { name, category = "Other", price = 0, description = "", imageUrl = "", quantity = 0 } = req.body;
     if (!name) {
       return res.status(400).json({ error: "Recipe name is required" });
     }
     
     if (useInMemory) {
-      const recipe = await store.addRecipe({ name, category, price, description });
+      const recipe = await store.addRecipe({ name, category, price, description, imageUrl, quantity });
       return res.json({ msg: "Recipe added", recipe });
     }
 
-    const recipe = new Recipe({ name, category, price, description });
+    const recipe = new Recipe({ name, category, price, description, imageUrl, quantity });
     await recipe.save();
     res.json({ msg: "Recipe added", recipe });
   } catch (error) {
@@ -89,6 +89,31 @@ exports.updateRecipe = async (req, res) => {
     }
     
     res.json({ msg: "Recipe updated", recipe });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.updateQuantity = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { amount } = req.body; // use negative for decrement
+    
+    // Simple logic: fetch, check, update
+    const recipe = useInMemory ? await store.getRecipeById(id) : await Recipe.findById(id);
+    if (!recipe) return res.status(404).json({ error: "Recipe not found" });
+
+    const newQty = (recipe.quantity || 0) + amount;
+    if (newQty < 0) return res.status(400).json({ error: "Insufficient stock" });
+
+    if (useInMemory) {
+      await store.updateRecipe(id, { quantity: newQty });
+    } else {
+      recipe.quantity = newQty;
+      await recipe.save();
+    }
+    
+    res.json({ msg: "Quantity updated", quantity: newQty });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

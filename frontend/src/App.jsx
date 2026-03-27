@@ -18,22 +18,32 @@ function App() {
 
   return (
     <div className="container">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} user={user} />
       
       <main>
-        {user && <p style={{ textAlign: "right", margin: "10px" }}>Welcome, <strong>{user.name}</strong>!</p>}
+        {user && (
+          <div className="user-info">
+            <p>Role: <span className="badge">{user.role}</span></p>
+            <p>Welcome, <strong>{user.name}</strong>!</p>
+          </div>
+        )}
         
-        {activeTab === "recipes" && <Home />}
+        {activeTab === "recipes" && <Home user={user} />}
         {activeTab === "users" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            <Register />
+            {!user && <Register />}
             <Login onLogin={handleLogin} />
           </div>
         )}
-        {activeTab === "dashboard" && (
+        {activeTab === "dashboard" && user?.role === "admin" && (
           <div className="tab-content">
-            <h2>📈 Cooking Statistics</h2>
+            <h2>🛠️ Admin Panel</h2>
             <AddRecipe onRecipeAdded={() => setActiveTab("recipes")} />
+          </div>
+        )}
+        {activeTab === "dashboard" && user?.role !== "admin" && (
+          <div className="tab-content">
+            <p className="error-message">❌ Access Denied: Admin role required.</p>
           </div>
         )}
       </main>

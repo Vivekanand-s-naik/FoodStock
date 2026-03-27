@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { api } from "../services/api";
 
 const Register = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "user" });
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -12,7 +12,7 @@ const Register = () => {
     try {
       await api.register(formData);
       setMsg("Registration successful! Please login.");
-      setFormData({ name: "", email: "", password: "" });
+      setFormData({ name: "", email: "", password: "", role: "user" });
     } catch (err) {
       setMsg("Error: " + err.message);
     } finally {
@@ -52,6 +52,16 @@ const Register = () => {
               onChange={e => setFormData({...formData, password: e.target.value})} 
               required 
             />
+          </div>
+          <div className="form-group">
+            <label>Role</label>
+            <select 
+              value={formData.role} 
+              onChange={e => setFormData({...formData, role: e.target.value})}
+            >
+              <option value="user">User (Customer)</option>
+              <option value="admin">Admin (Manager)</option>
+            </select>
           </div>
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? "Registering..." : "Sign Up"}

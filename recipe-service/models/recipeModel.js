@@ -17,6 +17,14 @@ const recipeSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  imageUrl: {
+    type: String,
+    default: ""
+  },
+  quantity: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now
